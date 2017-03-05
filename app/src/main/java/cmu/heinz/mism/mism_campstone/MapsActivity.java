@@ -10,9 +10,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.LinkedList;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private GoogleMap googleMap;
+    private static final int ZOOM_RATIO = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +39,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
+        this.googleMap = googleMap;
+        LinkedList<Position> positions = new LinkedList<>();
         LatLng cmuCampus = new LatLng(40.4435, -79.9435);
-        mMap.addMarker(new MarkerOptions().position(cmuCampus).title("Marker in CMU"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
+        positions.add(new Position(40.4435, -79.9435, "Marker in CMU","Your location"));
+        positions.add(new Position(40.4447566, -79.94725,
+                "Carnegie Museum of Natural History","Natural History Museum"));
+        positions.add(new Position(40.438352,-79.9487915, "Cathedral of Learning","College"));
+        for(Position position: positions){
+            LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+            this.googleMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(position.getTitle())
+                    .snippet(position.getSnippet()));
+        }
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cmuCampus, ZOOM_RATIO));
     }
 }
