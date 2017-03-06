@@ -12,6 +12,7 @@ import org.bson.Document;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,11 +26,10 @@ public class DBHelper {
     private MongoDatabase db;
     private MongoCollection<Document> collection;
 
-    DBHelper(String db_uri, String db_name, String collection_name) {
-        MongoClientURI uri = new MongoClientURI(db_uri);
-        client = new MongoClient(uri);
-        db = client.getDatabase(db_name);
-        collection = db.getCollection(collection_name);
+    DBHelper(String url, String dbName, String collectionName) {
+        client = new MongoClient(new MongoClientURI(url));
+        db = client.getDatabase(dbName);
+        collection = db.getCollection(collectionName);
     }
 
     public List<String> getPositions(double latitude, double longitude, int dis) {
@@ -49,18 +49,31 @@ public class DBHelper {
         return list;
     }
 
+    /**
+     * Return all locations and deserialize them into a List of
+     * {@link Location}.
+     *
+     * @return
+     */
+    public List<Location> getLocations() {
+        Gson gson = new Gson();
+        LinkedList<Location> locations = new LinkedList<>();
+        try (MongoCursor<Document> cursor = collection.find().iterator()) {
+            while (cursor.hasNext()) {
+                Location location = gson.fromJson(cursor.next().toJson(), Location.class);
+                locations.add(location);
+            }
+        }
+        return locations;
+    }
+
     public static void main(String[] args) throws IOException {
         DBHelper dbHelper = new DBHelper(
                 "mongodb://team2legendary:mlableg17@ds119020.mlab.com:19020/journey_db",
                 "journey_db",
-                "locations");
-        Gson gson = new Gson();
-        try (MongoCursor<Document> cursor = dbHelper.collection.find().iterator()) {
-            while (cursor.hasNext()) {
-                System.out.println(cursor.next().toJson());
-                Location location = gson.fromJson(cursor.next().toJson(), Location.class);
-                System.out.println(location.toString());
-            }
+                "locations2");
+        for (Location location : dbHelper.getLocations()) {
+            System.out.println(location.toString());
         }
     }
 }

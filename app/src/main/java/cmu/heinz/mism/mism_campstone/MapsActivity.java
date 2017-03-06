@@ -2,6 +2,7 @@ package cmu.heinz.mism.mism_campstone;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,7 +17,7 @@ import java.util.LinkedList;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap googleMap;
-    private static final int ZOOM_RATIO = 16;
+    private static final int ZOOM_RATIO = 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,30 +33,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * This is where we can add markers or lines, add listeners or move the
+     * camera. In this case,
      * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * If Google Play services is not installed on the device, the user will be
+     * prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once
+     * the user has
      * installed Google Play services and returned to the app.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        LinkedList<Location> locations = new LinkedList<>();
+        DBHelper dbHelper = new DBHelper(
+                "mongodb://team2legendary:mlableg17@ds119020.mlab.com:19020/journey_db",
+                "journey_db",
+                "locations2");
         LatLng cmuCampus = new LatLng(40.4435, -79.9435);
         // locations.add(new Location(40.4435, -79.9435, "Marker in CMU","Your location"));
         // locations.add(new Location(40.443967,-79.949318,
         //        "Carnegie Museum of Natural History","Natural History Museum"));
         // locations.add(new Location(40.4442526,-79.953239, "Cathedral of Learning","College"));
-        for(Location location : locations){
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-            Marker marker = this.googleMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(location.getName())
-                    .snippet(location.getAddress()));
-            marker.showInfoWindow();
-        }
+//        Log.d("MONGO", "dbHelper.getLocations().size()" + dbHelper.getLocations().size());
+//        for (Location location : dbHelper.getLocations()) {
+//            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+//            Marker marker = this.googleMap.addMarker(new MarkerOptions()
+//                    .position(latLng)
+//                    .title(location.getName())
+//                    .snippet(location.getStreetAddress()));
+//            marker.showInfoWindow();
+//        }
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cmuCampus, ZOOM_RATIO));
     }
