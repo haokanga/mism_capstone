@@ -17,3 +17,6 @@ Error:Gradle: A problem occurred evaluating project ':app'.
 Choose SDK with Android SDK.
 
 
+// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
+Warning:WARNING: Dependency org.apache.httpcomponents:httpclient:4.5.3 is ignored for debug as it may be conflicting with the internal version provided by Android.

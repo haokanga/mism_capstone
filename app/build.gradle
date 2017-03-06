@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.0"
     defaultConfig {
         applicationId "cmu.heinz.mism.mism_campstone"
-        minSdkVersion 25
+        minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -17,6 +17,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
@@ -26,12 +28,12 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.gms:play-services-maps:10.2.0'
-    provided "org.projectlombok:lombok:1.16.14"
+    provided 'org.projectlombok:lombok:1.16.14'
     // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
     // compile group: 'org.mongodb', name: 'mongo-java-driver', version: '1.3'
     // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver
-    compile group: 'org.mongodb', name: 'mongodb-driver', version: '3.4.2'
+    compile 'org.mongodb:mongodb-driver:3.4.2'
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
 }
