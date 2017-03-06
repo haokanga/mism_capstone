@@ -1,7 +1,12 @@
 package cmu.heinz.mism.mism_campstone;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -26,12 +31,7 @@ public final class RESTHelper {
     private static final String API_KEY = "SCE012pulvNzU94GjxiyeKRy0GsTK1-w";
     private static final int TIMEOUT = 3000;
     private static final int RESPONSE_LIMIT = 10000;
-
-    /**
-     * Util class should not be initialized.
-     */
-    private RESTHelper() {
-    }
+    private MapsActivity mapsActivity = null;
 
     /**
      * Return all locations and deserialize them into a List of
@@ -39,57 +39,83 @@ public final class RESTHelper {
      * <p>
      * TODO: consider using Network Operations on a Separate Thread
      * https://developer.android.com/training/basics/network-ops/connecting.html#intro
-     *
-     * @return locations in MongoDB
      */
-    public static List<Location> getLocations() {
-        InputStream stream = null;
-        HttpsURLConnection connection = null;
-        String result = null;
-        try {
-            URL url = new URL(COLLECTION_URL + API_KEY);
-            connection = (HttpsURLConnection) url.openConnection();
-            connection.setReadTimeout(TIMEOUT);
-            connection.setConnectTimeout(TIMEOUT);
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode != HttpsURLConnection.HTTP_OK) {
-                throw new IOException("HTTP error code: " + responseCode);
-            }
-            // Retrieve the response body as an InputStream.
-            stream = connection.getInputStream();
-            if (stream != null) {
-                result = readStream(stream, RESPONSE_LIMIT);
-            }
-        } catch (IOException e) {
-            Log.e("Capstone", e.getMessage());
-            StackTraceElement[] trace = e.getStackTrace();
-            for (StackTraceElement traceElement : trace) {
-                Log.e("Capstone", "\tat " + traceElement);
-            }
-        } finally {
-            // Close Stream and disconnect HTTPS connection.
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    public void getLocations(MapsActivity mapsActivity) {
+        this.mapsActivity = mapsActivity;
+        new AsyncRESTRequest().execute();
+    }
+
+    /**
+     * AsyncTask provides a simple way to use a thread separate from the UI thread in which to do network operations
+     */
+    private class AsyncRESTRequest extends AsyncTask<String, Void, ArrayList<Location>> {
+
+        protected ArrayList<Location> doInBackground(String... urls) {
+            InputStream stream = null;
+            HttpsURLConnection connection = null;
+            String result = null;
+            try {
+                URL url = new URL(COLLECTION_URL + API_KEY);
+                connection = (HttpsURLConnection) url.openConnection();
+                connection.setReadTimeout(TIMEOUT);
+                connection.setConnectTimeout(TIMEOUT);
+                connection.setRequestMethod("GET");
+                connection.setDoInput(true);
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+                if (responseCode != HttpsURLConnection.HTTP_OK) {
+                    throw new IOException("HTTP error code: " + responseCode);
+                }
+                // Retrieve the response body as an InputStream.
+                stream = connection.getInputStream();
+                if (stream != null) {
+                    result = readStream(stream, RESPONSE_LIMIT);
+                }
+            } catch (IOException e) {
+                Log.e("Capstone", e.getMessage());
+                StackTraceElement[] trace = e.getStackTrace();
+                for (StackTraceElement traceElement : trace) {
+                    Log.e("Capstone", "\tat " + traceElement);
+                }
+            } finally {
+                // Close Stream and disconnect HTTPS connection.
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (connection != null) {
+                    connection.disconnect();
                 }
             }
-            if (connection != null) {
-                connection.disconnect();
+            Log.v("", result);
+            return new ArrayList<>(
+                    Arrays.asList(new Gson().fromJson(result, Location[].class)));
+        }
+
+        protected void onPostExecute(ArrayList<Location> locations) {
+            // locations.add(new Location(40.4435, -79.9435, "Marker in CMU","Your location"));
+            // locations.add(new Location(40.443967,-79.949318,
+            //        "Carnegie Museum of Natural History","Natural History Museum"));
+            // locations.add(new Location(40.4442526,-79.953239, "Cathedral of Learning","College"));
+            for (Location location : locations) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                Marker marker = mapsActivity.googleMap.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .title(location.getName())
+                        .snippet(location.getStreetAddress()));
+                marker.showInfoWindow();
             }
         }
-        return new ArrayList<>(
-                Arrays.asList(new Gson().fromJson(result, Location[].class)));
     }
+
 
     /**
      * Converts the contents of an InputStream to a String.
      */
-    private static String readStream(InputStream stream, int maxLength) throws IOException {
+    private String readStream(InputStream stream, int maxLength) throws IOException {
         String result = null;
         // Read InputStream using the UTF-8 charset.
         InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
@@ -110,11 +136,5 @@ public final class RESTHelper {
             result = new String(buffer, 0, numChars);
         }
         return result;
-    }
-
-    public static void main(String[] args) throws IOException {
-        for (Location location : RESTHelper.getLocations()) {
-            System.out.println(location.toString());
-        }
     }
 }
