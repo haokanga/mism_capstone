@@ -41,18 +41,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        LinkedList<Position> positions = new LinkedList<>();
+        LinkedList<Location> locations = new LinkedList<>();
         LatLng cmuCampus = new LatLng(40.4435, -79.9435);
-        positions.add(new Position(40.4435, -79.9435, "Marker in CMU","Your location"));
-        positions.add(new Position(40.443967,-79.949318,
+        locations.add(new Location(40.4435, -79.9435, "Marker in CMU","Your location"));
+        locations.add(new Location(40.443967,-79.949318,
                 "Carnegie Museum of Natural History","Natural History Museum"));
-        positions.add(new Position(40.4442526,-79.953239, "Cathedral of Learning","College"));
-        for(Position position: positions){
-            LatLng latLng = new LatLng(position.getLatitude(), position.getLongitude());
+        locations.add(new Location(40.4442526,-79.953239, "Cathedral of Learning","College"));
+        for(Location location : locations){
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             Marker marker = this.googleMap.addMarker(new MarkerOptions()
                     .position(latLng)
-                    .title(position.getTitle())
-                    .snippet(position.getSnippet()));
+                    .title(location.getTitle())
+                    .snippet(location.getSnippet()));
             marker.showInfoWindow();
         }
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
