@@ -1,15 +1,14 @@
 package cmu.heinz.mism.mism_campstone;
 
-import lombok.AllArgsConstructor;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Type;
 
 /**
  * Location.
- *
+ * <p>
  * Although constructor and setters offered, the recommended usage is to use
  * GSON to deserialize {@code reference.json} directly to a list of Answer
  * objects. {@link Gson#fromJson(JsonReader, Type)}
@@ -17,18 +16,15 @@ import java.lang.reflect.Type;
  * fields, and @Setter on all non-final fields, and @RequiredArgsConstructor.
  */
 
-@AllArgsConstructor(suppressConstructorProperties=true)
+@Data
 public class Location {
-    @Getter
-    @Setter
-    public double latitude;
-    @Getter
-    @Setter
-    public double longitude;
-    @Getter
-    @Setter
-    private String title;
-    @Getter
-    @Setter
-    private String snippet;
+    private String category;
+    private String name;
+    private double latitude;
+    private double longitude;
+    private int year;
+    private String artistArchitect;
+    private String streetAddress;
+    private int zipCode;
+    private String image;
 }

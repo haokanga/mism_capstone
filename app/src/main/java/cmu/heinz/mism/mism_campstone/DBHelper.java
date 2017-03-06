@@ -1,5 +1,6 @@
 package cmu.heinz.mism.mism_campstone;
 
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -53,9 +54,12 @@ public class DBHelper {
                 "mongodb://team2legendary:mlableg17@ds119020.mlab.com:19020/journey_db",
                 "journey_db",
                 "locations");
+        Gson gson = new Gson();
         try (MongoCursor<Document> cursor = dbHelper.collection.find().iterator()) {
             while (cursor.hasNext()) {
                 System.out.println(cursor.next().toJson());
+                Location location = gson.fromJson(cursor.next().toJson(), Location.class);
+                System.out.println(location.toString());
             }
         }
     }
