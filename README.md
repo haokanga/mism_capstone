@@ -20,3 +20,12 @@ Choose SDK with Android SDK.
 // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
 compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
 Warning:WARNING: Dependency org.apache.httpcomponents:httpclient:4.5.3 is ignored for debug as it may be conflicting with the internal version provided by Android.
+
+Lombok usage:
+https://projectlombok.org/mavenrepo/
+
+package javax.annotation does not exist
+http://stackoverflow.com/questions/28465603/error-package-javax-annotation-does-not-exist-after-upgrade-to-lombok-1-16-2
+Global config keys
+https://projectlombok.org/features/configuration.html
+lombok.addGeneratedAnnotation = false
