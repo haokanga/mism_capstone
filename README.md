@@ -24,6 +24,19 @@ Warning:WARNING: Dependency org.apache.httpcomponents:httpclient:4.5.3 is ignore
 Lombok usage:
 https://projectlombok.org/mavenrepo/
 
+gradle:
+provided 'org.projectlombok:lombok:1.16.14'
+
+Android Studio
+
+Follow the previous instructions (Gradle). In addition to setting up your gradle project correctly, you need to add the Lombok IntelliJ plugin to add lombok support to Android Studio:
+Go to File > Settings > Plugins
+Click on Browse repositories...
+Search for Lombok Plugin
+Click on Install plugin
+Restart Android Studio
+
+
 package javax.annotation does not exist
 http://stackoverflow.com/questions/28465603/error-package-javax-annotation-does-not-exist-after-upgrade-to-lombok-1-16-2
 Global config keys
