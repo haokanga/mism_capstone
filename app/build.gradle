@@ -28,7 +28,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.google.android.gms:play-services-maps:10.2.0'
-    compile 'com.akexorcist:googledirectionlibrary:1.0.5'
     provided 'org.projectlombok:lombok:1.16.14'
     // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
     // compile group: 'org.mongodb', name: 'mongo-java-driver', version: '1.3'

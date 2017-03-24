@@ -3,10 +3,6 @@ package cmu.heinz.mism.mism_campstone;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.akexorcist.googledirection.DirectionCallback;
-import com.akexorcist.googledirection.GoogleDirection;
-import com.akexorcist.googledirection.model.Direction;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -18,7 +14,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -108,7 +103,7 @@ public final class RESTHelper {
 
             for (Location location : locations) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                Marker marker = mapsActivity.googleMap.addMarker(new MarkerOptions()
+                Marker marker = mapsActivity.mMap.addMarker(new MarkerOptions()
                         .position(latLng)
                         .title(location.getName())
                         .snippet(location.getStreetAddress()));
