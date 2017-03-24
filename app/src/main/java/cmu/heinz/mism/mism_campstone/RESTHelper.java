@@ -3,6 +3,9 @@ package cmu.heinz.mism.mism_campstone;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.model.Direction;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -30,7 +33,7 @@ public final class RESTHelper {
     private static final String COLLECTION_URL = BASE_URL + "databases/journey_db/collections/locations2?apiKey=";
     private static final String API_KEY = "SCE012pulvNzU94GjxiyeKRy0GsTK1-w";
     private static final int TIMEOUT = 3000;
-    private static final int RESPONSE_LIMIT = 10000;
+    private static final int RESPONSE_LIMIT = 50000;
     private MapsActivity mapsActivity = null;
 
     /**
@@ -100,6 +103,9 @@ public final class RESTHelper {
             // locations.add(new Location(40.443967,-79.949318,
             //        "Carnegie Museum of Natural History","Natural History Museum"));
             // locations.add(new Location(40.4442526,-79.953239, "Cathedral of Learning","College"));
+            // "Name" : "The Carnegie Library and Institute" , "Latitude" : 40.442778 , "Longitude" : -79.950556
+            // "Name" : "Carnegie Musuem of Art" , "Latitude" : 40.443983 , "Longitude" : -79.948728
+
             for (Location location : locations) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 Marker marker = mapsActivity.googleMap.addMarker(new MarkerOptions()

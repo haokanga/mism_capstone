@@ -2,7 +2,11 @@ package cmu.heinz.mism.mism_campstone;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.model.Direction;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -12,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     protected GoogleMap googleMap;
-    private static final int ZOOM_RATIO = 11;
+    private static final int ZOOM_RATIO = 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +40,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cmuCampus, ZOOM_RATIO));
         new RESTHelper().getLocations(this);
+        // Google Place API server key instead of Google Map API key
+        String serverKey = "AIzaSyB4ZPNRl8wM8bAKX9UfPRvqhePEd-Zv9o0";
+        LatLng origin = new LatLng(40.442778, -79.950556);
+        LatLng destination = new LatLng(40.443983, -79.948728);
+        GoogleDirection.withServerKey(serverKey)
+                .from(origin)
+                .to(destination)
+                .execute(new DirectionCallback() {
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+                        Log.v("[direction]", direction.getStatus());
+                        Log.v("[rawBody]", rawBody);
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
     }
 }
