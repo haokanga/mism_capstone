@@ -30,14 +30,12 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     protected GoogleMap mMap;
-    private static final int ZOOM_RATIO = 14;
-    ArrayList<LatLng> MarkerPoints;
+    private static final int ZOOM_RATIO = 16;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        MarkerPoints = new ArrayList<>();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -48,10 +46,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
+     * <p>
+     * Consider {@link GoogleMap#setOnMapClickListener(GoogleMap.OnMapClickListener)} for further events
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.mMap = googleMap;
+        // CMU as sample camera position
         LatLng cmuCampus = new LatLng(40.4435, -79.9435);
         this.mMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cmuCampus, ZOOM_RATIO));
@@ -59,68 +60,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Google Place API server key instead of Google Map API key
         String serverKey = "AIzaSyB4ZPNRl8wM8bAKX9UfPRvqhePEd-Zv9o0";
         LatLng origin = new LatLng(40.442778, -79.950556);
-        LatLng destination = new LatLng(40.443983, -79.948728);
-//        GoogleDirection.withServerKey(serverKey)
-//                .from(origin)
-//                .to(destination)
-//                .execute(new DirectionCallback() {
-//                    @Override
-//                    public void onDirectionSuccess(Direction direction, String rawBody) {
-//                        Log.v("[direction]", direction.getStatus());
-//                        Log.v("[rawBody]", rawBody);
-//                    }
-//
-//                    @Override
-//                    public void onDirectionFailure(Throwable t) {
-//                        t.printStackTrace();
-//                    }
-//                });
-        // Setting onclick event listener for the map
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng point) {
-                // Already two locations
-                if (MarkerPoints.size() > 1) {
-                    MarkerPoints.clear();
-                    mMap.clear();
-                }
-                // Adding new item to the ArrayList
-                MarkerPoints.add(point);
-                // Creating MarkerOptions
-                MarkerOptions options = new MarkerOptions();
-                // Setting the position of the marker
-                options.position(point);
-
-                /*
-                 * For the start location, the color of marker is GREEN and
-                 * for the end location, the color of marker is RED.
-                 */
-                if (MarkerPoints.size() == 1) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                } else if (MarkerPoints.size() == 2) {
-                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                }
-
-                // Add new marker to the Google Map Android API V2
-                mMap.addMarker(options);
-
-                // Checks, whether start and end locations are captured
-                if (MarkerPoints.size() >= 2) {
-                    LatLng origin = MarkerPoints.get(0);
-                    LatLng dest = MarkerPoints.get(1);
-
-                    // Getting URL to the Google Directions API
-                    String url = getUrl(origin, dest);
-                    FetchUrl FetchUrl = new FetchUrl();
-                    // Start downloading json data from Google Directions API
-                    FetchUrl.execute(url);
-                    //move map camera
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(origin));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_RATIO));
-                }
-
-            }
-        });
+        LatLng dest = new LatLng(40.443983, -79.948728);
+        // Creating MarkerOptions
+        MarkerOptions options = new MarkerOptions();
+        // Setting the position of the marker
+        options.position(dest);
+        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        // Add new marker to the Google Map Android API V2
+        mMap.addMarker(options);
+        // Getting URL to the Google Directions API
+        String url = getUrl(origin, dest);
+        FetchUrl FetchUrl = new FetchUrl();
+        // Start downloading json data from Google Directions API
+        FetchUrl.execute(url);
+        //move map camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(dest));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_RATIO));
     }
 
     /**
