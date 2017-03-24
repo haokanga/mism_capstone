@@ -1,17 +1,22 @@
 package cmu.heinz.mism.mism_campstone;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -30,6 +35,7 @@ public final class RESTHelper {
     private static final int TIMEOUT = 3000;
     private static final int RESPONSE_LIMIT = 50000;
     private MapsActivity mapsActivity = null;
+    private static ArrayList<Location> locations;
 
     /**
      * Return all locations and deserialize them into a List of
@@ -41,6 +47,10 @@ public final class RESTHelper {
     public void addLocations(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         new AsyncRESTRequest().execute();
+    }
+
+    public ArrayList<Location> getLocations() {
+        return locations;
     }
 
     /**
@@ -89,8 +99,9 @@ public final class RESTHelper {
                 }
             }
             Log.v("", result);
-            return new ArrayList<>(
+            locations = new ArrayList<>(
                     Arrays.asList(new Gson().fromJson(result, Location[].class)));
+            return locations;
         }
 
         protected void onPostExecute(ArrayList<Location> locations) {
@@ -107,11 +118,41 @@ public final class RESTHelper {
                         .position(latLng)
                         .title(location.getName())
                         .snippet(location.getStreetAddress()));
-                marker.showInfoWindow();
+                DownloadImageTask downloadImage = new DownloadImageTask(marker);
+                downloadImage.execute(location.getImage());
             }
         }
     }
 
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        private final Marker marker;
+
+        public DownloadImageTask(Marker marker) {
+            this.marker = marker;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... url) {
+            try {
+                final URLConnection conn = new URL(url[0]).openConnection();
+                conn.connect();
+                BufferedInputStream bis = new BufferedInputStream(conn.getInputStream());
+                Bitmap bm = BitmapFactory.decodeStream(bis);
+                // resize map
+                bm = Bitmap.createScaledBitmap(bm, 80, 80, false);
+                bis.close();
+                return bm;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            marker.setIcon(BitmapDescriptorFactory.fromBitmap(result));
+        }
+    }
 
     /**
      * Converts the contents of an InputStream to a String.

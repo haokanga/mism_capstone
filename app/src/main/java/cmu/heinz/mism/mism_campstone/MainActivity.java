@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Button button = (Button) findViewById(R.id.button);
-        // button.performClick();
+        button.performClick();
     }
 
     /** Called when the user taps the Send button */
