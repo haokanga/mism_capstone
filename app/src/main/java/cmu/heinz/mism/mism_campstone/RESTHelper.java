@@ -35,10 +35,10 @@ public final class RESTHelper {
      * Return all locations and deserialize them into a List of
      * {@link Location}.
      * <p>
-     * TODO: consider using Network Operations on a Separate Thread
+     * Using Network Operations on a Separate Thread
      * https://developer.android.com/training/basics/network-ops/connecting.html#intro
      */
-    public void getLocations(MapsActivity mapsActivity) {
+    public void addLocations(MapsActivity mapsActivity) {
         this.mapsActivity = mapsActivity;
         new AsyncRESTRequest().execute();
     }

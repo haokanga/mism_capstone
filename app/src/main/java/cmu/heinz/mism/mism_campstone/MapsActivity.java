@@ -56,18 +56,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng cmuCampus = new LatLng(40.4435, -79.9435);
         this.mMap.moveCamera(CameraUpdateFactory.newLatLng(cmuCampus));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(cmuCampus, ZOOM_RATIO));
-        new RESTHelper().getLocations(this);
-        // Google Place API server key instead of Google Map API key
-        String serverKey = "AIzaSyB4ZPNRl8wM8bAKX9UfPRvqhePEd-Zv9o0";
+        new RESTHelper().addLocations(this);
         LatLng origin = new LatLng(40.442778, -79.950556);
         LatLng dest = new LatLng(40.443983, -79.948728);
-        // Creating MarkerOptions
-        MarkerOptions options = new MarkerOptions();
-        // Setting the position of the marker
-        options.position(dest);
-        options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        // Add new marker to the Google Map Android API V2
-        mMap.addMarker(options);
         // Getting URL to the Google Directions API
         String url = getUrl(origin, dest);
         FetchUrl FetchUrl = new FetchUrl();
